@@ -54,10 +54,15 @@ bot.dialog('/', //basicQnAMakerDialog);
     function (session){
         var qnaKnowledgebaseId = process.env.QnAKnowledgebaseId;
         var qnaSubscriptionKey = process.env.QnASubscriptionKey;
+        var txt = session.message.text;
         
         // QnA Subscription Key and KnowledgeBase Id null verification
         if((qnaSubscriptionKey == null || qnaSubscriptionKey == '') || (qnaKnowledgebaseId == null || qnaKnowledgebaseId == ''))
-            session.send('Please set QnAKnowledgebaseId and QnASubscriptionKey in App Settings. Get them at https://qnamaker.ai.');
+            //session.send('Please set QnAKnowledgebaseId and QnASubscriptionKey in App Settings. Get them at https://qnamaker.ai.');
+            if(txt == "foo")
+            {
+                session.send('bar');
+            }
         else
             session.replaceDialog('basicQnAMakerDialog');
     }

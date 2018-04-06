@@ -32,78 +32,8 @@ server.post('/api/messages', connector.listen());
 var tableName = 'botdata';
 var azureTableClient = new botbuilder_azure.AzureTableClient(tableName, process.env['AzureWebJobsStorage']);
 var tableStorage = new botbuilder_azure.AzureBotStorage({ gzipData: false }, azureTableClient);
-
-// Create your bot with a function to receive messages from the user
-var bot = new builder.UniversalBot(connector, [
-    function (session) {
-        session.send("Welcome to the dinner reservation.");
-        session.beginDialog('preciousMetal');
-    },
-    function (session, results) {
-        if(results.response.entity == "Gold")
-        {
-            userScore = userScore + quizScore;
-            session.send("Correct!");
-        }
-        else
-        {
-            session.send("Incorrect. The right answer is Gold.");
-        }
-        session.beginDialog('desertAnimal');
-    },
-    function (session, results) {
-        if(results.response.entity == "Camel")
-        {
-            userScore = userScore + quizScore;
-            session.send("Correct!");
-        }
-        else
-        {
-            session.send("Incorrect. The right answer is Camel.");
-        }
-        session.beginDialog('planet');
-    },
-    function (session, results) {
-        if(results.response.entity == "Sun")
-        {
-            userScore = userScore + quizScore;
-            session.send("Correct!");
-        }
-        else
-        {
-            session.send("Incorrect. The right answer is Sun.");
-        }
-        session.beginDialog('fastestAnimal');
-    },
-    function (session, results) {
-        if(results.response.entity == "Cheetah")
-        {
-            userScore = userScore + quizScore;
-            session.send("Correct!");
-        }
-        else
-        {
-            session.send("Incorrect. The right answer is Cheetah.");
-        }
-        session.beginDialog('sensitiveOrgan');
-    },
-    function (session, results) {
-        if(results.response.entity == "Skin")
-        {
-            userScore =  userScore + quizScore;
-            session.dialogData.score = userScore;
-            session.send("Correct!");
-        }
-        else
-        {
-            session.send("Incorrect. The right answer is Skin.");
-        }
-        // Process request and display reservation details
-        session.send('You gain ' + userScore + " points. Click here to register your score https://dev.projectcog.com/Demo/skypebot/congraz.php?score=" + userScore + ".");
-        session.endDialog();
-    }
-]);
-bot.set('storage', tableStorage);
+var qnaKnowledgebaseId = null;
+var qnaSubscriptionKey = null;
 
 var recognizer = new builder_cognitiveservices.QnAMakerRecognizer({
                 knowledgeBaseId: process.env.QnAKnowledgebaseId, 
@@ -115,77 +45,127 @@ var basicQnAMakerDialog = new builder_cognitiveservices.QnAMakerDialog({
                 qnaThreshold: 0.3}
 );
 
+
+// Create your bot with a function to receive messages from the user
+var bot = new builder.UniversalBot(connector, [
+    function (session) {
+        qnaKnowledgebaseId = process.env.QnAKnowledgebaseId;
+        qnaSubscriptionKey = process.env.QnASubscriptionKey;
+        if((qnaSubscriptionKey == null || qnaSubscriptionKey == '') || (qnaKnowledgebaseId == null || qnaKnowledgebaseId == ''))
+        {
+            session.send("Welcome to a short quiz to test your knowledge.");
+            session.beginDialog('preciousMetal');
+        }
+        else
+        {
+            session.replaceDialog('basicQnAMakerDialog');
+        }
+    },
+    function (session, results) {
+        if((qnaSubscriptionKey == null || qnaSubscriptionKey == '') || (qnaKnowledgebaseId == null || qnaKnowledgebaseId == ''))
+        {
+            if(results.response.entity == "Gold")
+            {
+                userScore = userScore + quizScore;
+                session.send("Correct!");
+            }
+            else
+            {
+                session.send("Incorrect. The right answer is Gold.");
+            }
+            session.beginDialog('desertAnimal');
+        }
+        else
+        {
+            session.replaceDialog('basicQnAMakerDialog');
+        }
+    },
+    function (session, results) {
+        if((qnaSubscriptionKey == null || qnaSubscriptionKey == '') || (qnaKnowledgebaseId == null || qnaKnowledgebaseId == ''))
+        {
+            if(results.response.entity == "Camel")
+            {
+                userScore = userScore + quizScore;
+                session.send("Correct!");
+            }
+            else
+            {
+                session.send("Incorrect. The right answer is Camel.");
+            }
+            session.beginDialog('planet');
+        }
+        else
+        {
+            session.replaceDialog('basicQnAMakerDialog');
+        }
+    },
+    function (session, results) {
+        if((qnaSubscriptionKey == null || qnaSubscriptionKey == '') || (qnaKnowledgebaseId == null || qnaKnowledgebaseId == ''))
+        {
+            if(results.response.entity == "Sun")
+            {
+                userScore = userScore + quizScore;
+                session.send("Correct!");
+            }
+            else
+            {
+                session.send("Incorrect. The right answer is Sun.");
+            }
+            session.beginDialog('fastestAnimal');
+        }
+        else
+        {
+            session.replaceDialog('basicQnAMakerDialog');
+        }
+    },
+    function (session, results) {
+        if((qnaSubscriptionKey == null || qnaSubscriptionKey == '') || (qnaKnowledgebaseId == null || qnaKnowledgebaseId == ''))
+        {
+            if(results.response.entity == "Cheetah")
+            {
+                userScore = userScore + quizScore;
+                session.send("Correct!");
+            }
+            else
+            {
+                session.send("Incorrect. The right answer is Cheetah.");
+            }
+            session.beginDialog('sensitiveOrgan');
+        }
+        else
+        {
+            session.replaceDialog('basicQnAMakerDialog');
+        }
+    },
+    function (session, results) {
+        if((qnaSubscriptionKey == null || qnaSubscriptionKey == '') || (qnaKnowledgebaseId == null || qnaKnowledgebaseId == ''))
+        {
+            if(results.response.entity == "Skin")
+            {
+                userScore =  userScore + quizScore;
+                session.dialogData.score = userScore;
+                session.send("Correct!");
+            }
+            else
+            {
+                session.send("Incorrect. The right answer is Skin.");
+            }
+            // Process request and display reservation details
+            session.send('You gain ' + userScore + " points. Click here to register your score https://dev.projectcog.com/Demo/skypebot/congraz.php?score=" + userScore + ".");
+            session.endDialog();
+        }
+        else
+        {
+            session.replaceDialog('basicQnAMakerDialog');
+        }
+    }
+]);
+bot.set('storage', tableStorage);
+
 bot.dialog('basicQnAMakerDialog', basicQnAMakerDialog);
 
 /*bot.dialog('/', //basicQnAMakerDialog);
 [
-    function (session) {
-        session.send("Welcome to a short quiz to test your knowledge.");
-        session.beginDialog('preciousMetal');
-    },
-    function (session, results) {
-        if(results.response.entity == "Gold")
-        {
-            userScore = userScore + quizScore;
-            session.send("Correct!");
-        }
-        else
-        {
-            session.send("Incorrect. The right answer is Gold.");
-        }
-        session.beginDialog('desertAnimal');
-    },
-    function (session, results) {
-        if(results.response.entity == "Camel")
-        {
-            userScore = userScore + quizScore;
-            session.send("Correct!");
-        }
-        else
-        {
-            session.send("Incorrect. The right answer is Camel.");
-        }
-        session.beginDialog('planet');
-    },
-    function (session, results) {
-        if(results.response.entity == "Sun")
-        {
-            userScore = userScore + quizScore;
-            session.send("Correct!");
-        }
-        else
-        {
-            session.send("Incorrect. The right answer is Sun.");
-        }
-        session.beginDialog('fastestAnimal');
-    },
-    function (session, results) {
-        if(results.response.entity == "Cheetah")
-        {
-            userScore = userScore + quizScore;
-            session.send("Correct!");
-        }
-        else
-        {
-            session.send("Incorrect. The right answer is Cheetah.");
-        }
-        session.beginDialog('sensitiveOrgan');
-    },
-    function (session, results) {
-        if(results.response.entity == "Skin")
-        {
-            userScore =  userScore + quizScore;
-            session.dialogData.score = userScore;
-            session.send("Correct!");
-        }
-        else
-        {
-            session.send("Incorrect. The right answer is Skin.");
-        }
-        // Process request and display reservation details
-        session.send('You gain ' + userScore + " points. Click here to register your score https://dev.projectcog.com/Demo/skypebot/congraz.php?score=" + userScore + ".");
-        session.endDialog();
-    }*/
     /*function (session){
         var qnaKnowledgebaseId = process.env.QnAKnowledgebaseId;
         var qnaSubscriptionKey = process.env.QnASubscriptionKey;

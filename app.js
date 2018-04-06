@@ -156,6 +156,7 @@ var bot = new builder.UniversalBot(connector, [
             }
             // Process request and display reservation details
             session.send('You gain ' + userScore + " points. Click here to register your score https://dev.projectcog.com/Demo/skypebot/congraz.php?score=" + userScore + ".");
+            userScore = 0;
             session.endDialog();
         }
         else

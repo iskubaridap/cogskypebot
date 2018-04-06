@@ -47,6 +47,10 @@ var basicQnAMakerDialog = new builder_cognitiveservices.QnAMakerDialog({
 
 
 // Create your bot with a function to receive messages from the user
+var userScore = 0;
+var numQuestions = 5;
+var quizScore = 20;
+
 var bot = new builder.UniversalBot(connector, [
     function (session) {
         qnaKnowledgebaseId = process.env.QnAKnowledgebaseId;

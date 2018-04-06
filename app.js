@@ -34,23 +34,7 @@ var azureTableClient = new botbuilder_azure.AzureTableClient(tableName, process.
 var tableStorage = new botbuilder_azure.AzureBotStorage({ gzipData: false }, azureTableClient);
 
 // Create your bot with a function to receive messages from the user
-var bot = new builder.UniversalBot(connector);
-bot.set('storage', tableStorage);
-
-var recognizer = new builder_cognitiveservices.QnAMakerRecognizer({
-                knowledgeBaseId: process.env.QnAKnowledgebaseId, 
-    subscriptionKey: process.env.QnASubscriptionKey});
-
-var basicQnAMakerDialog = new builder_cognitiveservices.QnAMakerDialog({
-    recognizers: [recognizer],
-                defaultMessage: 'No match! Try changing the query terms!',
-                qnaThreshold: 0.3}
-);
-
-bot.dialog('basicQnAMakerDialog', basicQnAMakerDialog);
-
-bot.dialog('/', //basicQnAMakerDialog);
-[
+var bot = new builder.UniversalBot(connector, [
     function (session) {
         session.send("Welcome to the dinner reservation.");
         session.beginDialog('preciousMetal');
@@ -118,6 +102,90 @@ bot.dialog('/', //basicQnAMakerDialog);
         session.send('You gain ' + userScore + " points. Click here to register your score https://dev.projectcog.com/Demo/skypebot/congraz.php?score=" + userScore + ".");
         session.endDialog();
     }
+]);
+bot.set('storage', tableStorage);
+
+var recognizer = new builder_cognitiveservices.QnAMakerRecognizer({
+                knowledgeBaseId: process.env.QnAKnowledgebaseId, 
+    subscriptionKey: process.env.QnASubscriptionKey});
+
+var basicQnAMakerDialog = new builder_cognitiveservices.QnAMakerDialog({
+    recognizers: [recognizer],
+                defaultMessage: 'No match! Try changing the query terms!',
+                qnaThreshold: 0.3}
+);
+
+bot.dialog('basicQnAMakerDialog', basicQnAMakerDialog);
+
+/*bot.dialog('/', //basicQnAMakerDialog);
+[
+    function (session) {
+        session.send("Welcome to a short quiz to test your knowledge.");
+        session.beginDialog('preciousMetal');
+    },
+    function (session, results) {
+        if(results.response.entity == "Gold")
+        {
+            userScore = userScore + quizScore;
+            session.send("Correct!");
+        }
+        else
+        {
+            session.send("Incorrect. The right answer is Gold.");
+        }
+        session.beginDialog('desertAnimal');
+    },
+    function (session, results) {
+        if(results.response.entity == "Camel")
+        {
+            userScore = userScore + quizScore;
+            session.send("Correct!");
+        }
+        else
+        {
+            session.send("Incorrect. The right answer is Camel.");
+        }
+        session.beginDialog('planet');
+    },
+    function (session, results) {
+        if(results.response.entity == "Sun")
+        {
+            userScore = userScore + quizScore;
+            session.send("Correct!");
+        }
+        else
+        {
+            session.send("Incorrect. The right answer is Sun.");
+        }
+        session.beginDialog('fastestAnimal');
+    },
+    function (session, results) {
+        if(results.response.entity == "Cheetah")
+        {
+            userScore = userScore + quizScore;
+            session.send("Correct!");
+        }
+        else
+        {
+            session.send("Incorrect. The right answer is Cheetah.");
+        }
+        session.beginDialog('sensitiveOrgan');
+    },
+    function (session, results) {
+        if(results.response.entity == "Skin")
+        {
+            userScore =  userScore + quizScore;
+            session.dialogData.score = userScore;
+            session.send("Correct!");
+        }
+        else
+        {
+            session.send("Incorrect. The right answer is Skin.");
+        }
+        // Process request and display reservation details
+        session.send('You gain ' + userScore + " points. Click here to register your score https://dev.projectcog.com/Demo/skypebot/congraz.php?score=" + userScore + ".");
+        session.endDialog();
+    }*/
     /*function (session){
         var qnaKnowledgebaseId = process.env.QnAKnowledgebaseId;
         var qnaSubscriptionKey = process.env.QnASubscriptionKey;
@@ -133,7 +201,7 @@ bot.dialog('/', //basicQnAMakerDialog);
         else
             session.replaceDialog('basicQnAMakerDialog');
     }*/
-]);
+//]);
 
 
 bot.dialog("preciousMetal",[

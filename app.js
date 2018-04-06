@@ -58,11 +58,11 @@ bot.dialog('/', //basicQnAMakerDialog);
         
         // QnA Subscription Key and KnowledgeBase Id null verification
         if((qnaSubscriptionKey == null || qnaSubscriptionKey == '') || (qnaKnowledgebaseId == null || qnaKnowledgebaseId == ''))
-            //session.send('Please set QnAKnowledgebaseId and QnASubscriptionKey in App Settings. Get them at https://qnamaker.ai.');
-            if(txt == "foo")
+            session.send('This is a test for Projectcog\'s Skype Bot app.');
+            /*if(txt == "foo")
             {
                 session.send('bar');
-            }
+            }*/
         else
             session.replaceDialog('basicQnAMakerDialog');
     }

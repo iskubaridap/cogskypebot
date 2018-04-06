@@ -51,7 +51,74 @@ bot.dialog('basicQnAMakerDialog', basicQnAMakerDialog);
 
 bot.dialog('/', //basicQnAMakerDialog);
 [
-    function (session){
+    function (session) {
+        session.send("Welcome to the dinner reservation.");
+        session.beginDialog('preciousMetal');
+    },
+    function (session, results) {
+        if(results.response.entity == "Gold")
+        {
+            userScore = userScore + quizScore;
+            session.send("Correct!");
+        }
+        else
+        {
+            session.send("Incorrect. The right answer is Gold.");
+        }
+        session.beginDialog('desertAnimal');
+    },
+    function (session, results) {
+        if(results.response.entity == "Camel")
+        {
+            userScore = userScore + quizScore;
+            session.send("Correct!");
+        }
+        else
+        {
+            session.send("Incorrect. The right answer is Camel.");
+        }
+        session.beginDialog('planet');
+    },
+    function (session, results) {
+        if(results.response.entity == "Sun")
+        {
+            userScore = userScore + quizScore;
+            session.send("Correct!");
+        }
+        else
+        {
+            session.send("Incorrect. The right answer is Sun.");
+        }
+        session.beginDialog('fastestAnimal');
+    },
+    function (session, results) {
+        if(results.response.entity == "Cheetah")
+        {
+            userScore = userScore + quizScore;
+            session.send("Correct!");
+        }
+        else
+        {
+            session.send("Incorrect. The right answer is Cheetah.");
+        }
+        session.beginDialog('sensitiveOrgan');
+    },
+    function (session, results) {
+        if(results.response.entity == "Skin")
+        {
+            userScore =  userScore + quizScore;
+            session.dialogData.score = userScore;
+            session.send("Correct!");
+        }
+        else
+        {
+            session.send("Incorrect. The right answer is Skin.");
+        }
+        // Process request and display reservation details
+        session.send('You gain ' + userScore + " points. Click here to register your score https://dev.projectcog.com/Demo/skypebot/congraz.php?score=" + userScore + ".");
+        session.endDialog();
+    }
+    /*function (session){
         var qnaKnowledgebaseId = process.env.QnAKnowledgebaseId;
         var qnaSubscriptionKey = process.env.QnASubscriptionKey;
         var txt = session.message.text;
@@ -59,11 +126,53 @@ bot.dialog('/', //basicQnAMakerDialog);
         // QnA Subscription Key and KnowledgeBase Id null verification
         if((qnaSubscriptionKey == null || qnaSubscriptionKey == '') || (qnaKnowledgebaseId == null || qnaKnowledgebaseId == ''))
             session.send('This is a test for Projectcog\'s Skype Bot app.');
-            /*if(txt == "foo")
-            {
-                session.send('bar');
-            }*/
+            //if(txt == "foo")
+            //{
+            //    session.send('bar');
+            //}
         else
             session.replaceDialog('basicQnAMakerDialog');
+    }*/
+]);
+
+
+bot.dialog("preciousMetal",[
+    function (session) {
+        builder.Prompts.choice(session, "Which is the heavier metal?", ["Silver","Gold","Bronze"], { listStyle: 3 }); 
+    },
+    function (session, results) {
+        session.endDialogWithResult(results);
+    }
+]);
+bot.dialog("desertAnimal",[
+    function (session) {
+        builder.Prompts.choice(session, "Which is the animal referred as the ship of the desert?", ["Camel","Snake","Rat", "Scorpion"], { listStyle: 3 }); 
+    },
+    function (session, results) {
+        session.endDialogWithResult(results);
+    }
+]);
+bot.dialog("planet",[
+    function (session) {
+        builder.Prompts.choice(session, "Which is the nearest star to planet earth?", ["Mercury","Saturn","Venus", "Sun"], { listStyle: 3 }); 
+    },
+    function (session, results) {
+        session.endDialogWithResult(results);
+    }
+]);
+bot.dialog("fastestAnimal",[
+    function (session) {
+        builder.Prompts.choice(session, "Which is the fastest animal on the land?", ["Dog","Deer","Cheetah", "Mouse"], { listStyle: 3 }); 
+    },
+    function (session, results) {
+        session.endDialogWithResult(results);
+    }
+]);
+bot.dialog("sensitiveOrgan",[
+    function (session) {
+        builder.Prompts.choice(session, "Which is the most sensitive organ in our body?", ["Heart","Skin","Brain", "Eyes"], { listStyle: 3 }); 
+    },
+    function (session, results) {
+        session.endDialogWithResult(results);
     }
 ]);

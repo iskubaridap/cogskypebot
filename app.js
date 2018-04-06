@@ -49,8 +49,8 @@ var basicQnAMakerDialog = new builder_cognitiveservices.QnAMakerDialog({
 
 bot.dialog('basicQnAMakerDialog', basicQnAMakerDialog);
 
-bot.dialog('/', basicQnAMakerDialog);
-/*[
+bot.dialog('/', //basicQnAMakerDialog);
+[
     function (session){
         var qnaKnowledgebaseId = process.env.QnAKnowledgebaseId;
         var qnaSubscriptionKey = process.env.QnASubscriptionKey;
@@ -61,4 +61,4 @@ bot.dialog('/', basicQnAMakerDialog);
         else
             session.replaceDialog('basicQnAMakerDialog');
     }
-]);*/
+]);

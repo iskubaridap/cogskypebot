@@ -71,7 +71,7 @@ var bot = new builder.UniversalBot(connector, [
         qnaSubscriptionKey = process.env.QnASubscriptionKey;
         if((qnaSubscriptionKey == null || qnaSubscriptionKey == '') || (qnaKnowledgebaseId == null || qnaKnowledgebaseId == ''))
         {
-            session.send("Welcome to the dinner reservation.");
+            session.send("Welcome to the Cog Skype Bot. Take the quiz to demostrate the app.");
             session.beginDialog('preciousMetal');
         }
         else

@@ -51,32 +51,110 @@ var userScore = 0;
 var numQuestions = 5;
 var quizScore = 20;
 
-var bot = new builder.UniversalBot(connector, [
-    function (session) {
-        session.send("Welcome to the dinner reservation.");
-        session.beginDialog('preciousMetal');
-    },
-    function (session, results) {
-        session.beginDialog('desertAnimal');
-    },
-    function (session, results) {
-        session.beginDialog('planet');
-    },
-    function (session, results) {
-        session.beginDialog('fastestAnimal');
-    },
-    function (session, results) {
-        session.beginDialog('sensitiveOrgan');
-    },
-    function (session, results) {
-        // Process request and display reservation details
-        session.send('You gain ' + userScore + " points. Click here to register your score https://dev.projectcog.com/Demo/skypebot/congraz.php?score=" + userScore + ".");
+function responseToAnswer(session, answer,corAns,incorRes)
+{
+    if(answer == corAns)
+    {
+        userScore = userScore + quizScore;
+        session.send("Correct!");
         session.endDialog();
     }
-]).set('storage', inMemoryStorage);
+    else
+    {
+        session.send("Incorrect. The right answer is " + incorRes + ".");
+    }
+}
+
+var bot = new builder.UniversalBot(connector, [
+    function (session) {
+        qnaKnowledgebaseId = process.env.QnAKnowledgebaseId;
+        qnaSubscriptionKey = process.env.QnASubscriptionKey;
+        if((qnaSubscriptionKey == null || qnaSubscriptionKey == '') || (qnaKnowledgebaseId == null || qnaKnowledgebaseId == ''))
+        {
+            session.send("Welcome to the dinner reservation.");
+            session.beginDialog('preciousMetal');
+        }
+        else
+        {
+            session.replaceDialog('basicQnAMakerDialog');
+        }
+    },
+    function (session, results) {
+        if((qnaSubscriptionKey == null || qnaSubscriptionKey == '') || (qnaKnowledgebaseId == null || qnaKnowledgebaseId == ''))
+        {
+            session.beginDialog('desertAnimal');
+        }
+        else
+        {
+            session.replaceDialog('basicQnAMakerDialog');
+        }
+    },
+    function (session, results) {
+        if((qnaSubscriptionKey == null || qnaSubscriptionKey == '') || (qnaKnowledgebaseId == null || qnaKnowledgebaseId == ''))
+        {
+            session.beginDialog('planet');
+        }
+        else
+        {
+            session.replaceDialog('basicQnAMakerDialog');
+        }
+    },
+    function (session, results) {
+        if((qnaSubscriptionKey == null || qnaSubscriptionKey == '') || (qnaKnowledgebaseId == null || qnaKnowledgebaseId == ''))
+        {
+            session.beginDialog('fastestAnimal');
+        }
+        else
+        {
+            session.replaceDialog('basicQnAMakerDialog');
+        }
+    },
+    function (session, results) {
+        if((qnaSubscriptionKey == null || qnaSubscriptionKey == '') || (qnaKnowledgebaseId == null || qnaKnowledgebaseId == ''))
+        {
+            session.beginDialog('sensitiveOrgan');
+        }
+        else
+        {
+            session.replaceDialog('basicQnAMakerDialog');
+        }
+    },
+    function (session, results) {
+        if((qnaSubscriptionKey == null || qnaSubscriptionKey == '') || (qnaKnowledgebaseId == null || qnaKnowledgebaseId == ''))
+        {
+            session.send('You gain ' + userScore + " points. Click here to register your score https://dev.projectcog.com/Demo/skypebot/congraz.php?score=" + userScore + ".");
+            session.endDialog();
+            userScore = 0;
+        }
+        else
+        {
+            session.replaceDialog('basicQnAMakerDialog');
+        }
+    }
+]).set('storage', tableStorage);
 bot.set('storage', tableStorage);
 
 bot.dialog('basicQnAMakerDialog', basicQnAMakerDialog);
+
+/*bot.dialog('/', //basicQnAMakerDialog);
+[
+    /*function (session){
+        var qnaKnowledgebaseId = process.env.QnAKnowledgebaseId;
+        var qnaSubscriptionKey = process.env.QnASubscriptionKey;
+        var txt = session.message.text;
+        
+        // QnA Subscription Key and KnowledgeBase Id null verification
+        if((qnaSubscriptionKey == null || qnaSubscriptionKey == '') || (qnaKnowledgebaseId == null || qnaKnowledgebaseId == ''))
+            session.send('This is a test for Projectcog\'s Skype Bot app.');
+            //if(txt == "foo")
+            //{
+            //    session.send('bar');
+            //}
+        else
+            session.replaceDialog('basicQnAMakerDialog');
+    }*/
+//]);
+
 
 bot.dialog("preciousMetal",[
     function (session) {

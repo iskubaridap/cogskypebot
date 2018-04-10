@@ -72,6 +72,7 @@ var bot = new builder.UniversalBot(connector, [
         if((qnaSubscriptionKey == null || qnaSubscriptionKey == '') || (qnaKnowledgebaseId == null || qnaKnowledgebaseId == ''))
         {
             session.send("Welcome to the Cog Skype Bot. Take the quiz to demostrate the app.");
+            session.send('To leave or reset, type "Exit" and to skip a question, type "Next".');
             session.beginDialog('preciousMetal');
         }
         else

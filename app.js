@@ -53,179 +53,93 @@ var quizScore = 20;
 
 var bot = new builder.UniversalBot(connector, [
     function (session) {
-        qnaKnowledgebaseId = process.env.QnAKnowledgebaseId;
-        qnaSubscriptionKey = process.env.QnASubscriptionKey;
-        if((qnaSubscriptionKey == null || qnaSubscriptionKey == '') || (qnaKnowledgebaseId == null || qnaKnowledgebaseId == ''))
-        {
-            session.send("Welcome to a short quiz to test your knowledge.");
-            session.beginDialog('preciousMetal');
-        }
-        else
-        {
-            session.replaceDialog('basicQnAMakerDialog');
-        }
+        session.send("Welcome to the dinner reservation.");
+        session.beginDialog('preciousMetal');
     },
     function (session, results) {
-        if((qnaSubscriptionKey == null || qnaSubscriptionKey == '') || (qnaKnowledgebaseId == null || qnaKnowledgebaseId == ''))
-        {
-            if(results.response.entity == "Gold")
-            {
-                userScore = userScore + quizScore;
-                session.send("Correct!");
-            }
-            else
-            {
-                session.send("Incorrect. The right answer is Gold.");
-            }
-            session.beginDialog('desertAnimal');
-        }
-        else
-        {
-            session.replaceDialog('basicQnAMakerDialog');
-        }
+        session.beginDialog('desertAnimal');
     },
     function (session, results) {
-        if((qnaSubscriptionKey == null || qnaSubscriptionKey == '') || (qnaKnowledgebaseId == null || qnaKnowledgebaseId == ''))
-        {
-            if(results.response.entity == "Camel")
-            {
-                userScore = userScore + quizScore;
-                session.send("Correct!");
-            }
-            else
-            {
-                session.send("Incorrect. The right answer is Camel.");
-            }
-            session.beginDialog('planet');
-        }
-        else
-        {
-            session.replaceDialog('basicQnAMakerDialog');
-        }
+        session.beginDialog('planet');
     },
     function (session, results) {
-        if((qnaSubscriptionKey == null || qnaSubscriptionKey == '') || (qnaKnowledgebaseId == null || qnaKnowledgebaseId == ''))
-        {
-            if(results.response.entity == "Sun")
-            {
-                userScore = userScore + quizScore;
-                session.send("Correct!");
-            }
-            else
-            {
-                session.send("Incorrect. The right answer is Sun.");
-            }
-            session.beginDialog('fastestAnimal');
-        }
-        else
-        {
-            session.replaceDialog('basicQnAMakerDialog');
-        }
+        session.beginDialog('fastestAnimal');
     },
     function (session, results) {
-        if((qnaSubscriptionKey == null || qnaSubscriptionKey == '') || (qnaKnowledgebaseId == null || qnaKnowledgebaseId == ''))
-        {
-            if(results.response.entity == "Cheetah")
-            {
-                userScore = userScore + quizScore;
-                session.send("Correct!");
-            }
-            else
-            {
-                session.send("Incorrect. The right answer is Cheetah.");
-            }
-            session.beginDialog('sensitiveOrgan');
-        }
-        else
-        {
-            session.replaceDialog('basicQnAMakerDialog');
-        }
+        session.beginDialog('sensitiveOrgan');
     },
     function (session, results) {
-        if((qnaSubscriptionKey == null || qnaSubscriptionKey == '') || (qnaKnowledgebaseId == null || qnaKnowledgebaseId == ''))
-        {
-            if(results.response.entity == "Skin")
-            {
-                userScore =  userScore + quizScore;
-                session.dialogData.score = userScore;
-                session.send("Correct!");
-            }
-            else
-            {
-                session.send("Incorrect. The right answer is Skin.");
-            }
-            // Process request and display reservation details
-            session.send('You gain ' + userScore + " points. Click here to register your score https://dev.projectcog.com/Demo/skypebot/congraz.php?score=" + userScore + ".");
-            userScore = 0;
-            session.endDialog();
-        }
-        else
-        {
-            session.replaceDialog('basicQnAMakerDialog');
-        }
+        // Process request and display reservation details
+        session.send('You gain ' + userScore + " points. Click here to register your score https://dev.projectcog.com/Demo/skypebot/congraz.php?score=" + userScore + ".");
+        session.endDialog();
     }
-]);
+]).set('storage', inMemoryStorage);
 bot.set('storage', tableStorage);
 
 bot.dialog('basicQnAMakerDialog', basicQnAMakerDialog);
-
-/*bot.dialog('/', //basicQnAMakerDialog);
-[
-    /*function (session){
-        var qnaKnowledgebaseId = process.env.QnAKnowledgebaseId;
-        var qnaSubscriptionKey = process.env.QnASubscriptionKey;
-        var txt = session.message.text;
-        
-        // QnA Subscription Key and KnowledgeBase Id null verification
-        if((qnaSubscriptionKey == null || qnaSubscriptionKey == '') || (qnaKnowledgebaseId == null || qnaKnowledgebaseId == ''))
-            session.send('This is a test for Projectcog\'s Skype Bot app.');
-            //if(txt == "foo")
-            //{
-            //    session.send('bar');
-            //}
-        else
-            session.replaceDialog('basicQnAMakerDialog');
-    }*/
-//]);
-
 
 bot.dialog("preciousMetal",[
     function (session) {
         builder.Prompts.choice(session, "Which is the heavier metal?", ["Silver","Gold","Bronze"], { listStyle: 3 }); 
     },
     function (session, results) {
-        session.endDialogWithResult(results);
+        responseToAnswer(session, results.response.entity,"Gold","Gold");
     }
-]);
+]).cancelAction('cancelAction', 'Ok, this question is cancel.', {
+    matches: /^nevermind$|^next|^cancel$|^cancel.*order/i,
+    confirmPrompt: "Are you sure?"
+}).endConversationAction('endConversationAction', 'Ok, goodbye!', {
+    matches: /^exit/i
+});
 bot.dialog("desertAnimal",[
     function (session) {
         builder.Prompts.choice(session, "Which is the animal referred as the ship of the desert?", ["Camel","Snake","Rat", "Scorpion"], { listStyle: 3 }); 
     },
     function (session, results) {
-        session.endDialogWithResult(results);
+        responseToAnswer(session, results.response.entity,"Camel","Camel");
     }
-]);
+]).cancelAction('cancelAction', 'Ok, this question is cancel.', {
+    matches: /^nevermind$|^next|^cancel$|^cancel.*order/i,
+    confirmPrompt: "Are you sure?"
+}).endConversationAction('endConversationAction', 'Ok, goodbye!', {
+    matches: /^exit/i
+});
 bot.dialog("planet",[
     function (session) {
         builder.Prompts.choice(session, "Which is the nearest star to planet earth?", ["Mercury","Saturn","Venus", "Sun"], { listStyle: 3 }); 
     },
     function (session, results) {
-        session.endDialogWithResult(results);
+        responseToAnswer(session, results.response.entity,"Sun","Sun");
     }
-]);
+]).cancelAction('cancelAction', 'Ok, this question is cancel.', {
+    matches: /^nevermind$|^next|^cancel$|^cancel.*order/i,
+    confirmPrompt: "Are you sure?"
+}).endConversationAction('endConversationAction', 'Ok, goodbye!', {
+    matches: /^exit/i
+});
 bot.dialog("fastestAnimal",[
     function (session) {
         builder.Prompts.choice(session, "Which is the fastest animal on the land?", ["Dog","Deer","Cheetah", "Mouse"], { listStyle: 3 }); 
     },
     function (session, results) {
-        session.endDialogWithResult(results);
+        responseToAnswer(session, results.response.entity,"Cheetah","Cheetah");
     }
-]);
+]).cancelAction('cancelAction', 'Ok, this question is cancel.', {
+    matches: /^nevermind$|^next|^cancel$|^cancel.*order/i,
+    confirmPrompt: "Are you sure?"
+}).endConversationAction('endConversationAction', 'Ok, goodbye!', {
+    matches: /^exit/i
+});
 bot.dialog("sensitiveOrgan",[
     function (session) {
         builder.Prompts.choice(session, "Which is the most sensitive organ in our body?", ["Heart","Skin","Brain", "Eyes"], { listStyle: 3 }); 
     },
     function (session, results) {
-        session.endDialogWithResult(results);
+        responseToAnswer(session, results.response.entity,"Skin","Skin");
     }
-]);
+]).cancelAction('cancelAction', 'Ok, this question is cancel.', {
+    matches: /^nevermind$|^next|^cancel$|^cancel.*order/i,
+    confirmPrompt: "Are you sure?"
+}).endConversationAction('endConversationAction', 'Ok, goodbye!', {
+    matches: /^exit/i
+});
